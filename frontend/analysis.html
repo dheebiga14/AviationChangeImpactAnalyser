@@ -1,0 +1,614 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Change Impact Analysis - Aviation Command Center</title>
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+  <style>
+    /* Analysis-specific styles */
+    .stepper-container {
+      display: grid;
+      grid-template-columns: repeat(6, 1fr);
+      gap: 8px;
+      margin-bottom: 16px;
+    }
+    .step-card {
+      background: #061726;
+      border: 1px solid var(--border-panel);
+      border-radius: var(--radius-sm);
+      padding: 9px 11px;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      position: relative;
+      transition: var(--transition);
+    }
+    .step-card.completed {
+      border-color: rgba(57, 217, 138, 0.4);
+      background: rgba(8, 30, 22, 0.5);
+    }
+    .step-card.running {
+      border-color: #2196f3;
+      background: rgba(14, 45, 75, 0.5);
+    }
+    .step-title {
+      font-size: 10.5px;
+      font-weight: 700;
+      color: #fff;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .step-badge {
+      font-size: 8px;
+      padding: 2px 5px;
+      border-radius: 3px;
+      font-weight: 700;
+    }
+    .step-badge.done {
+      background: rgba(57, 217, 138, 0.2);
+      color: #39d98a;
+    }
+    .step-badge.pending {
+      background: rgba(94, 125, 149, 0.2);
+      color: var(--text-muted);
+    }
+    .step-badge.active {
+      background: rgba(33, 212, 255, 0.2);
+      color: var(--accent-cyan);
+    }
+    .diff-box {
+      background: #030d17;
+      border: 1px solid var(--border-panel);
+      border-radius: var(--radius-sm);
+      padding: 10px;
+      font-family: var(--font-mono);
+      font-size: 10px;
+      line-height: 1.5;
+      max-height: 220px;
+      overflow-y: auto;
+      white-space: pre-wrap;
+    }
+    .diff-line-add {
+      color: #39d98a;
+      background: rgba(57, 217, 138, 0.08);
+      display: block;
+    }
+    .diff-line-del {
+      color: #ff5266;
+      background: rgba(255, 82, 102, 0.08);
+      display: block;
+    }
+    .diff-line-header {
+      color: var(--accent-cyan);
+      background: rgba(33, 212, 255, 0.08);
+      display: block;
+    }
+    .diff-line-info {
+      color: var(--text-muted);
+      display: block;
+    }
+    .control-bar {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      background: #071928;
+      border: 1px solid var(--border-panel);
+      border-radius: var(--radius-md);
+      padding: 12px 16px;
+      margin-bottom: 16px;
+    }
+    .select-input {
+      background: #04121f;
+      border: 1px solid var(--border-panel);
+      border-radius: var(--radius-sm);
+      color: #fff;
+      padding: 7px 10px;
+      font-size: 11px;
+      font-family: inherit;
+    }
+  </style>
+</head>
+<body>
+  <div class="app-container">
+    <!-- Sidebar -->
+    <aside class="sidebar">
+      <div class="brand">
+        <div class="brand-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17.8 19.2 16 11l3.5-3.5C21 6 21.5 4 21 3c-1-.5-3 0-4.5 1.5L13 8 4.8 6.2c-.5-.1-.9.1-1.1.5l-.3.5c-.2.5-.1 1 .3 1.3L9 12l-2 3H4l-1 1 3 2 2 3 1-1v-3l3-2 3.5 5.2c.3.4.8.5 1.3.3l.5-.2c.4-.3.6-.7.5-1.1z"/></svg>
+        </div>
+        <div class="brand-info">
+          <div class="brand-title">Aviation Change<br>Impact Analyzer</div>
+          <div class="brand-subtitle">Safer Skies Through Smarter Analysis</div>
+        </div>
+      </div>
+
+      <nav class="nav-menu">
+        <a href="dashboard.html" class="nav-item">
+          <span class="nav-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg></span>
+          <span>Dashboard</span>
+        </a>
+        <a href="analysis.html" class="nav-item active">
+          <span class="nav-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="18" cy="18" r="3"/><circle cx="6" cy="6" r="3"/><path d="M13 6h3a2 2 0 0 1 2 2v7"/><line x1="6" y1="9" x2="6" y2="21"/></svg></span>
+          <span>Analysis</span>
+        </a>
+        <a href="flights.html" class="nav-item">
+          <span class="nav-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17.8 19.2 16 11l3.5-3.5C21 6 21.5 4 21 3c-1-.5-3 0-4.5 1.5L13 8 4.8 6.2c-.5-.1-.9.1-1.1.5l-.3.5c-.2.5-.1 1 .3 1.3L9 12l-2 3H4l-1 1 3 2 2 3 1-1v-3l3-2 3.5 5.2c.3.4.8.5 1.3.3l.5-.2c.4-.3.6-.7.5-1.1z"/></svg></span>
+          <span>Flights</span>
+        </a>
+        <a href="tests.html" class="nav-item">
+          <span class="nav-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg></span>
+          <span>Tests</span>
+        </a>
+        <a href="reports.html" class="nav-item">
+          <span class="nav-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg></span>
+          <span>Reports</span>
+        </a>
+      </nav>
+
+      <div class="sidebar-graphic">
+        <img src="images/sidebar-jet.jpg" alt="Commercial Jet Silhouette">
+        <div class="sidebar-graphic-overlay">
+          <div class="sidebar-graphic-text">Analyze<br>Predict<br>Keep Flights Safe</div>
+          <div class="sidebar-graphic-sub">Safe Skies System</div>
+        </div>
+      </div>
+
+      <div class="sidebar-footer">
+        <div>Aviation Change Impact Analyzer v1.0.0</div>
+        <div style="color:var(--text-muted)">Built for safer aviation ✈</div>
+      </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="main-wrapper">
+      <header class="top-header">
+        <div class="header-left">
+          <div class="header-title-badge">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="var(--accent-cyan)" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+            <span>Change Impact Analysis Center</span>
+          </div>
+        </div>
+        <div class="header-right">
+          <div class="status-indicator">
+            <span class="pulse-dot"></span>
+            <span>System Online</span>
+          </div>
+          <div class="header-divider"></div>
+          <div class="header-clock" id="topDate">Loading time...</div>
+          <div class="header-divider"></div>
+          <div class="admin-profile">
+            <span class="admin-avatar">👤</span>
+            <span>Admin</span>
+          </div>
+        </div>
+      </header>
+
+      <div class="content-body">
+        <div class="page-intro">
+          <div class="page-heading">
+            <h1>Change Impact Analysis</h1>
+            <p>End-to-end AST inspection, dependency topology, impact scope, ML risk assessment, and regression prioritization.</p>
+          </div>
+          <button class="action-btn primary" id="btnTriggerAnalysis" style="padding:8px 16px;">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+            <span>Execute Analysis</span>
+          </button>
+        </div>
+
+        <!-- Analysis Control Bar -->
+        <div class="control-bar">
+          <div>
+            <label style="font-size:9.5px;color:var(--text-muted);display:block;margin-bottom:3px;text-transform:uppercase;">Baseline Source</label>
+            <select class="select-input" id="baselineSelect">
+              <option value="version_1" selected>Version 1 (aviation_software/version_1)</option>
+            </select>
+          </div>
+          <div>
+            <label style="font-size:9.5px;color:var(--text-muted);display:block;margin-bottom:3px;text-transform:uppercase;">Target Software</label>
+            <select class="select-input" id="targetSelect">
+              <option value="version_2" selected>Version 2 (aviation_software/version_2)</option>
+            </select>
+          </div>
+          <div>
+            <label style="font-size:9.5px;color:var(--text-muted);display:block;margin-bottom:3px;text-transform:uppercase;">Filter Module</label>
+            <select class="select-input" id="moduleFilterSelect">
+              <option value="all" selected>All Modules (Full Suite)</option>
+              <option value="navigation.py">navigation.py</option>
+              <option value="flight_planning.py">flight_planning.py</option>
+              <option value="aircraft_monitoring.py">aircraft_monitoring.py</option>
+              <option value="weather.py">weather.py</option>
+              <option value="communication.py">communication.py</option>
+            </select>
+          </div>
+          <div style="margin-left:auto;text-align:right;">
+            <span style="font-size:10px;color:var(--text-muted);">Status:</span>
+            <b style="color:var(--risk-low);font-size:11px;" id="analysisStatusLabel">ANALYSIS COMPLETED</b>
+          </div>
+        </div>
+
+        <!-- 6-Stage Workflow Progress Stepper -->
+        <div class="stepper-container" id="stepperContainer">
+          <div class="step-card completed" id="step1">
+            <div class="step-title">
+              <span>1. Change Detection</span>
+              <span class="step-badge done">DONE</span>
+            </div>
+            <div style="font-size:9px;color:var(--text-muted)">AST & text diffs</div>
+          </div>
+          <div class="step-card completed" id="step2">
+            <div class="step-title">
+              <span>2. AST Analysis</span>
+              <span class="step-badge done">DONE</span>
+            </div>
+            <div style="font-size:9px;color:var(--text-muted)">Functions & calls</div>
+          </div>
+          <div class="step-card completed" id="step3">
+            <div class="step-title">
+              <span>3. Dependency Analysis</span>
+              <span class="step-badge done">DONE</span>
+            </div>
+            <div style="font-size:9px;color:var(--text-muted)">Directed graph</div>
+          </div>
+          <div class="step-card completed" id="step4">
+            <div class="step-title">
+              <span>4. Impact Analysis</span>
+              <span class="step-badge done">DONE</span>
+            </div>
+            <div style="font-size:9px;color:var(--text-muted)">Direct & indirect</div>
+          </div>
+          <div class="step-card completed" id="step5">
+            <div class="step-title">
+              <span>5. Risk Analysis</span>
+              <span class="step-badge done">DONE</span>
+            </div>
+            <div style="font-size:9px;color:var(--text-muted)">Rules & ML model</div>
+          </div>
+          <div class="step-card completed" id="step6">
+            <div class="step-title">
+              <span>6. Prioritization</span>
+              <span class="step-badge done">DONE</span>
+            </div>
+            <div style="font-size:9px;color:var(--text-muted)">Regression suites</div>
+          </div>
+        </div>
+
+        <!-- Analysis Metrics Summary -->
+        <div class="top-kpi-row" style="grid-template-columns: repeat(4, 1fr); margin-bottom:16px;">
+          <div class="kpi-card">
+            <span class="kpi-label">Modified Files</span>
+            <div class="kpi-main-val">
+              <span class="kpi-number" id="anChangedCount">5</span>
+              <span class="kpi-subtext">files detected</span>
+            </div>
+            <span class="kpi-delta">AST parsed successfully</span>
+          </div>
+
+          <div class="kpi-card">
+            <span class="kpi-label">Total Impact Scope</span>
+            <div class="kpi-main-val">
+              <span class="kpi-number" id="anImpactScope">5</span>
+              <span class="kpi-subtext">modules affected</span>
+            </div>
+            <span class="kpi-delta">100% interconnected</span>
+          </div>
+
+          <div class="kpi-card">
+            <span class="kpi-label">Calculated Risk Score</span>
+            <div class="kpi-main-val">
+              <span class="kpi-number" id="anRiskScore">82</span>
+              <span class="kpi-subtext">/ 100</span>
+            </div>
+            <span class="badge high">HIGH RISK</span>
+          </div>
+
+          <div class="kpi-card">
+            <span class="kpi-label">ML Prediction Confidence</span>
+            <div class="kpi-main-val">
+              <span class="kpi-number" id="anMlConfidence">94.2%</span>
+            </div>
+            <span class="kpi-delta" style="color:var(--accent-cyan)">RandomForest Classifier</span>
+          </div>
+        </div>
+
+        <!-- Middle Row: AST & Code Diff Viewer + AI Risk Explanation -->
+        <div style="display:grid;grid-template-columns:1.2fr 0.8fr;gap:14px;margin-bottom:16px;">
+          <!-- Code Diff Viewer -->
+          <div class="panel">
+            <div class="panel-header">
+              <div class="panel-title-wrap">
+                <span class="panel-title">Source Code Modifications & AST Diffs</span>
+                <span class="panel-subtitle" id="diffSubtitle">navigation.py — 54 additions, 1 deletions</span>
+              </div>
+              <div style="display:flex;gap:6px;">
+                <button class="btn-secondary" onclick="switchDiffFile('navigation.py')">navigation.py</button>
+                <button class="btn-secondary" onclick="switchDiffFile('weather.py')">weather.py</button>
+              </div>
+            </div>
+            <div class="panel-body">
+              <div class="diff-box" id="diffCodeBox">
+Loading AST diffs...
+              </div>
+            </div>
+          </div>
+
+          <!-- AI Risk Explainability & Why the Module is Risky -->
+          <div class="panel">
+            <div class="panel-header">
+              <div class="panel-title-wrap">
+                <span class="panel-title">AI Risk Explainability</span>
+                <span class="panel-subtitle">Why this modification is safety-critical</span>
+              </div>
+              <span class="badge critical">CRITICAL REASONING</span>
+            </div>
+            <div class="panel-body">
+              <div style="margin-bottom:12px;">
+                <div style="font-size:10px;font-weight:700;color:var(--text-muted);text-transform:uppercase;margin-bottom:6px;">Key Contributing Risk Factors:</div>
+                <div id="aiFactorsList" style="display:flex;flex-direction:column;gap:6px;">
+                  <div class="factor-line">
+                    <span>1. Safety-Critical Module</span>
+                    <b style="color:#ff5266">navigation (Criticality: 5/5)</b>
+                  </div>
+                  <div class="factor-line">
+                    <span>2. Downstream Blast Radius</span>
+                    <b style="color:#ff5266">5 interconnected modules</b>
+                  </div>
+                  <div class="factor-line">
+                    <span>3. Significant Code Changes</span>
+                    <b style="color:#f0c75e">Added functions & route deviation</b>
+                  </div>
+                  <div class="factor-line">
+                    <span>4. Regression Mandate</span>
+                    <b style="color:#39d98a">15 tests prioritized</b>
+                  </div>
+                </div>
+              </div>
+
+              <div style="background:#061625;border:1px solid #14354e;border-radius:4px;padding:10px;font-size:10.5px;color:var(--text-secondary);line-height:1.45;">
+                <b style="color:#fff;">Explainability Summary:</b> Changes in <code style="color:var(--accent-cyan)">navigation.py</code> introduce route deviation metrics which cascade directly into <code style="color:#f0c75e">flight_planning</code> and <code style="color:#f0c75e">aircraft_monitoring</code>. In a safety-critical aviation architecture, navigational modifications must undergo mandatory re-validation before flight release.
+              </div>
+            </div>
+          </div>
+        <!-- Box A: Interactive Module Dependency & Impact Topology -->
+        <div class="panel" style="margin-bottom:16px;">
+          <div class="panel-header">
+            <div class="panel-title-wrap">
+              <span class="panel-title">Interactive Module Dependency & Impact Topology</span>
+              <span class="panel-subtitle">DO-178C verified directed graph: tracking direct & indirect impact propagation across software modules</span>
+            </div>
+            <div style="display:flex;align-items:center;gap:10px;">
+              <span class="badge" style="background:rgba(33,212,255,0.12);color:var(--accent-cyan);border:1px solid rgba(33,212,255,0.3);">
+                5 Core Modules Active
+              </span>
+            </div>
+          </div>
+          <div class="panel-body">
+            <div class="topology-wrap">
+              <!-- SVG Graph Canvas -->
+              <div class="topology-canvas-container" id="topoCanvasContainer">
+                <!-- Controls Bar -->
+                <div class="topology-controls-bar">
+                  <button class="topo-ctrl-btn" id="topoZoomIn" title="Zoom In">
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                    <span>Zoom In</span>
+                  </button>
+                  <button class="topo-ctrl-btn" id="topoZoomOut" title="Zoom Out">
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                    <span>Zoom Out</span>
+                  </button>
+                  <button class="topo-ctrl-btn" id="topoFitView" title="Fit to Screen">
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"/></svg>
+                    <span>Fit</span>
+                  </button>
+                  <button class="topo-ctrl-btn" id="topoReset" title="Reset View">
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M23 4v6h-6"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
+                    <span>Reset</span>
+                  </button>
+                </div>
+
+                <!-- Legend Bar -->
+                <div class="topology-legend-bar">
+                  <div class="topo-legend-item">
+                    <span class="topo-legend-dot" style="background:#ff4757;box-shadow:0 0 6px #ff4757;"></span>
+                    <span>Changed</span>
+                  </div>
+                  <div class="topo-legend-item">
+                    <span class="topo-legend-dot" style="background:#ff7849;box-shadow:0 0 6px #ff7849;"></span>
+                    <span>Direct Impact</span>
+                  </div>
+                  <div class="topo-legend-item">
+                    <span class="topo-legend-dot" style="background:#f0c75e;box-shadow:0 0 6px #f0c75e;"></span>
+                    <span>Indirect Impact</span>
+                  </div>
+                  <div class="topo-legend-item">
+                    <span class="topo-legend-dot" style="background:#39d98a;box-shadow:0 0 6px #39d98a;"></span>
+                    <span>Unaffected</span>
+                  </div>
+                  <div style="width:1px;height:12px;background:var(--border-panel);margin:0 4px;"></div>
+                  <div class="topo-legend-item">
+                    <span style="display:inline-block;width:14px;height:2px;background:#ff7849;"></span>
+                    <span>Direct Edge</span>
+                  </div>
+                  <div class="topo-legend-item">
+                    <span style="display:inline-block;width:14px;height:2px;border-top:2px dashed #f0c75e;"></span>
+                    <span>Indirect Edge</span>
+                  </div>
+                </div>
+
+                <svg id="depTopologySvg" width="100%" height="100%" viewBox="0 0 920 420" preserveAspectRatio="xMidYMid meet">
+                  <!-- Rendered dynamically via JavaScript -->
+                </svg>
+              </div>
+
+              <!-- Module Interactive Details Card -->
+              <div class="topology-details-card" id="topologyDetailsCard">
+                <div class="topo-card-header">
+                  <div>
+                    <div class="topo-card-title" id="topoCardModuleName">Navigation</div>
+                    <div class="topo-card-file" id="topoCardModuleFile">navigation.py</div>
+                  </div>
+                  <span class="badge critical" id="topoCardStatusBadge">CHANGED</span>
+                </div>
+
+                <div class="mod-detail-row">
+                  <span class="mod-detail-label">Impact Classification</span>
+                  <span class="mod-detail-val" id="topoCardImpactVal" style="color:#ff5266;">Direct Impact (Change Origin)</span>
+                </div>
+
+                <div class="mod-detail-row">
+                  <span class="mod-detail-label">Safety Risk Level & DO-178C Criticality</span>
+                  <div style="display:flex;align-items:center;justify-content:space-between;margin-top:2px;">
+                    <span class="mod-detail-val" id="topoCardRiskVal" style="color:#ff5266;">85 / 100 — High Risk (Level A)</span>
+                  </div>
+                  <div style="width:100%;height:4px;background:#030d17;border-radius:2px;margin-top:4px;overflow:hidden;">
+                    <div id="topoCardRiskBar" style="width:85%;height:100%;background:linear-gradient(90deg, #ff7849, #ff4757);"></div>
+                  </div>
+                </div>
+
+                <div class="mod-detail-row">
+                  <span class="mod-detail-label">Direct Upstream Dependencies</span>
+                  <div class="dep-pills-wrap" id="topoCardUpstream">
+                    <span style="font-size:10px;color:var(--text-muted);">None (Root Ingestion)</span>
+                  </div>
+                </div>
+
+                <div class="mod-detail-row">
+                  <span class="mod-detail-label">Downstream Ripple Dependents</span>
+                  <div class="dep-pills-wrap" id="topoCardDownstream">
+                    <span class="dep-pill">flight_planning.py</span>
+                    <span class="dep-pill">aircraft_monitoring.py</span>
+                  </div>
+                </div>
+
+                <div class="mod-detail-row" style="border-bottom:none;flex:1;display:flex;flex-direction:column;">
+                  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;">
+                    <span class="mod-detail-label">Affected Regression Tests</span>
+                    <span class="badge" style="font-size:8.5px;padding:1px 6px;" id="topoCardTestCount">6 Tests</span>
+                  </div>
+                  <div id="topoCardAffectedList" style="max-height:130px;overflow-y:auto;display:flex;flex-direction:column;gap:4px;">
+                    <!-- Injected dynamically -->
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Box B: Prioritized Regression Test Suite -->
+        <div class="panel" style="margin-bottom:16px;">
+          <div class="panel-header">
+            <div class="panel-title-wrap">
+              <span class="panel-title">Prioritized Regression Test Suite</span>
+              <span class="panel-subtitle">DO-178C test prioritization based on AST delta, blast radius, and failure probability</span>
+            </div>
+            <div style="display:flex;gap:8px;">
+              <span class="status-indicator">
+                <span class="pulse-dot" style="background:#39d98a;"></span>
+                <span id="testsRunningStatus" style="font-size:10.5px;">Ready (26 Tests)</span>
+              </span>
+            </div>
+          </div>
+          <div class="panel-body">
+            <!-- Top KPI Counters -->
+            <div class="test-kpi-bar">
+              <div class="test-kpi-box total">
+                <div class="test-kpi-box-num" id="suiteTotalKpi">26</div>
+                <div class="test-kpi-box-label">Total Test Cases</div>
+              </div>
+              <div class="test-kpi-box critical">
+                <div class="test-kpi-box-num" id="suiteCritKpi" style="color:#ff4757;">9</div>
+                <div class="test-kpi-box-label">Critical (Level A)</div>
+              </div>
+              <div class="test-kpi-box high">
+                <div class="test-kpi-box-num" id="suiteHighKpi" style="color:#ff7849;">7</div>
+                <div class="test-kpi-box-label">High Priority</div>
+              </div>
+              <div class="test-kpi-box medium">
+                <div class="test-kpi-box-num" id="suiteMedKpi" style="color:#f0c75e;">6</div>
+                <div class="test-kpi-box-label">Medium Priority</div>
+              </div>
+              <div class="test-kpi-box low">
+                <div class="test-kpi-box-num" id="suiteLowKpi" style="color:#39d98a;">4</div>
+                <div class="test-kpi-box-label">Low / Routine</div>
+              </div>
+            </div>
+
+            <!-- Action & Filter Bar -->
+            <div class="test-action-bar">
+              <div class="test-actions-left">
+                <button class="action-btn primary" id="btnRunSelectedTests" style="padding:7px 14px;">
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+                  <span>Run Selected</span>
+                  <span class="test-badge-count" id="selectedTestsCount">0</span>
+                </button>
+                <button class="action-btn" id="btnRunCriticalTests" style="background:#8b1a2b;color:#fff;border:1px solid #ff4757;padding:7px 14px;">
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+                  <span>Run Critical Tests</span>
+                </button>
+                <button class="btn-secondary" id="btnRefreshTests" style="padding:7px 12px;">
+                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M23 4v6h-6"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
+                  <span>Refresh Tests</span>
+                </button>
+              </div>
+
+              <div class="test-actions-right">
+                <input type="text" class="search-input" id="testTableSearchInput" placeholder="Search test cases..." style="background:#030d17;border:1px solid var(--border-panel);color:#fff;border-radius:4px;padding:6px 10px;font-size:11px;width:180px;">
+                <select class="select-input" id="testTableComponentFilter" style="padding:6px 10px;font-size:11px;">
+                  <option value="all" selected>All Components</option>
+                  <option value="navigation">Navigation</option>
+                  <option value="flight_planning">Flight Planning</option>
+                  <option value="aircraft_monitoring">Aircraft Monitoring</option>
+                  <option value="weather">Weather</option>
+                  <option value="communication">Communication</option>
+                </select>
+                <select class="select-input" id="testTablePriorityFilter" style="padding:6px 10px;font-size:11px;">
+                  <option value="all" selected>All Priorities</option>
+                  <option value="CRITICAL">Critical</option>
+                  <option value="HIGH">High</option>
+                  <option value="MEDIUM">Medium</option>
+                  <option value="LOW">Low</option>
+                </select>
+              </div>
+            </div>
+
+            <!-- Test Cases Table -->
+            <div style="overflow-x:auto;">
+              <table class="data-table">
+                <thead>
+                  <tr>
+                    <th style="width:36px;text-align:center;">
+                      <input type="checkbox" id="selectAllTestsHeader" title="Select All Tests" style="cursor:pointer;accent-color:var(--accent-cyan);">
+                    </th>
+                    <th style="width:40px;">#</th>
+                    <th style="min-width:220px;">Test Case</th>
+                    <th>Component</th>
+                    <th>Criticality</th>
+                    <th>Priority</th>
+                    <th>Execution Status</th>
+                    <th style="text-align:center;width:110px;">Action</th>
+                  </tr>
+                </thead>
+                <tbody id="analysisTestsTable">
+                  <!-- Rendered dynamically -->
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <footer class="app-footer">
+        <span>Aviation Change Impact Analyzer &nbsp; v1.0.0</span>
+        <span>Built for safer aviation ✈</span>
+      </footer>
+    </main>
+  </div>
+
+  <script src="js/api.js"></script>
+  <script src="js/analysis.js"></script>
+</body>
+</html>

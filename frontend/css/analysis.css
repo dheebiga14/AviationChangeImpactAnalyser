@@ -1,0 +1,2 @@
+
+.analysis-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}.analysis-stat{display:flex;gap:8px;flex-wrap:wrap}.analysis-chip{background:#071a29;border:1px solid #17405a;padding:7px 9px;border-radius:5px;font-size:9px;color:#bcd0de}@media(max-width:750px){.analysis-grid{grid-template-columns:1fr}}

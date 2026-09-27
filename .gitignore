@@ -1,0 +1,55 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Virtual environment
+.venv/
+venv/
+env/
+
+# Environment variables
+.env
+.env.*
+
+# IDE
+.vscode/
+.idea/
+
+# Jupyter
+.ipynb_checkpoints/
+
+# Python packaging
+*.egg-info/
+dist/
+build/
+
+# Generated database
+*.db
+*.sqlite
+*.sqlite3
+
+# Generated reports
+reports/*.pdf
+
+# Machine learning generated model
+ml_models/*.pkl
+
+# Logs
+*.log
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Temporary files
+*.tmp
+*.temp
+
+# Test/cache files
+.pytest_cache/
+.coverage
+htmlcov/
+
+# Generated data
+data/risk_history.json

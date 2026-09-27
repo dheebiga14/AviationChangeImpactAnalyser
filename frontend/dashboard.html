@@ -1,0 +1,869 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Aviation Change Impact Analyzer - Command Center</title>
+  <link rel="stylesheet" href="css/style.css?v=5.0">
+  <link rel="stylesheet" href="css/leaflet.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+</head>
+<body>
+  <div class="app-container">
+    <!-- Fixed Sidebar -->
+    <aside class="sidebar">
+      <div class="brand">
+        <div class="brand-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M17.8 19.2 16 11l3.5-3.5C21 6 21.5 4 21 3c-1-.5-3 0-4.5 1.5L13 8 4.8 6.2c-.5-.1-.9.1-1.1.5l-.3.5c-.2.5-.1 1 .3 1.3L9 12l-2 3H4l-1 1 3 2 2 3 1-1v-3l3-2 3.5 5.2c.3.4.8.5 1.3.3l.5-.2c.4-.3.6-.7.5-1.1z"/>
+          </svg>
+        </div>
+        <div class="brand-info">
+          <div class="brand-title">Aviation Change<br>Impact Analyzer</div>
+          <div class="brand-subtitle">Safer Skies Through Smarter Analysis</div>
+        </div>
+      </div>
+
+      <nav class="nav-menu">
+        <a href="dashboard.html" class="nav-item active">
+          <span class="nav-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+          </span>
+          <span>Dashboard</span>
+        </a>
+        <a href="analysis.html" class="nav-item">
+          <span class="nav-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="18" cy="18" r="3"/><circle cx="6" cy="6" r="3"/><path d="M13 6h3a2 2 0 0 1 2 2v7"/><line x1="6" y1="9" x2="6" y2="21"/></svg>
+          </span>
+          <span>Analysis</span>
+        </a>
+        <a href="flights.html" class="nav-item">
+          <span class="nav-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17.8 19.2 16 11l3.5-3.5C21 6 21.5 4 21 3c-1-.5-3 0-4.5 1.5L13 8 4.8 6.2c-.5-.1-.9.1-1.1.5l-.3.5c-.2.5-.1 1 .3 1.3L9 12l-2 3H4l-1 1 3 2 2 3 1-1v-3l3-2 3.5 5.2c.3.4.8.5 1.3.3l.5-.2c.4-.3.6-.7.5-1.1z"/></svg>
+          </span>
+          <span>Flights</span>
+        </a>
+        <a href="tests.html" class="nav-item">
+          <span class="nav-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
+          </span>
+          <span>Tests</span>
+        </a>
+        <a href="reports.html" class="nav-item">
+          <span class="nav-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+          </span>
+          <span>Reports</span>
+        </a>
+      </nav>
+
+      <!-- Sidebar Jet Graphic -->
+      <div class="sidebar-graphic">
+        <img src="images/sidebar-jet.jpg" alt="Commercial Jet Silhouette">
+        <div class="sidebar-graphic-overlay">
+          <div class="sidebar-graphic-text">Analyze<br>Predict<br>Keep Flights Safe</div>
+          <div class="sidebar-graphic-sub">Safe Skies System</div>
+        </div>
+      </div>
+
+      <div class="sidebar-footer">
+        <div>Aviation Change Impact Analyzer v1.0.0</div>
+        <div style="color:var(--text-muted)">Built for safer aviation ✈</div>
+      </div>
+    </aside>
+
+    <!-- Main Content Area -->
+    <main class="main-wrapper">
+      <!-- Top Application Header -->
+      <header class="top-header">
+        <div class="header-left">
+          <div class="header-title-badge">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="var(--accent-cyan)" stroke-width="2">
+              <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+            </svg>
+            <span>Safety-Critical Aviation Environment</span>
+          </div>
+        </div>
+
+        <div class="header-right">
+          <div class="status-indicator">
+            <span class="pulse-dot"></span>
+            <span id="systemStatusText">System Online</span>
+          </div>
+
+          <div class="header-divider"></div>
+
+          <div class="header-clock" id="topDate">Loading time...</div>
+
+          <div class="header-divider"></div>
+
+          <div class="admin-profile" title="Admin User">
+            <span class="admin-avatar">👤</span>
+            <span>Admin</span>
+            <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+          </div>
+        </div>
+      </header>
+
+      <!-- Dashboard View Content -->
+      <div class="content-body">
+        <div class="page-intro">
+          <div class="page-heading">
+            <h1>System Dashboard</h1>
+            <p>Real-time overview of aviation software change impact and system status.</p>
+          </div>
+          <div class="live-system-badge">
+            <span class="pulse-dot"></span>
+            <span>SYSTEM ONLINE</span>
+          </div>
+        </div>
+
+        <!-- Row 1: KPI Cards + Live System Status -->
+        <section class="top-kpi-row">
+          <!-- KPI 1 -->
+          <div class="kpi-card">
+            <div class="kpi-top">
+              <span class="kpi-label">Changed Modules</span>
+              <div class="kpi-icon blue">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>
+              </div>
+            </div>
+            <div class="kpi-main-val">
+              <span class="kpi-number" id="changedModulesNum">2</span>
+              <span class="kpi-subtext">out of 5</span>
+            </div>
+            <div class="kpi-delta" id="changedModulesDelta">
+              <span>▲ +1 from last analysis</span>
+            </div>
+          </div>
+
+          <!-- KPI 2 -->
+          <div class="kpi-card">
+            <div class="kpi-top">
+              <span class="kpi-label">Affected Modules</span>
+              <div class="kpi-icon blue">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>
+              </div>
+            </div>
+            <div class="kpi-main-val">
+              <span class="kpi-number" id="affectedModulesNum">5</span>
+              <span class="kpi-subtext">total modules</span>
+            </div>
+            <div class="kpi-delta" id="affectedModulesDelta">
+              <span>▲ +2 from last analysis</span>
+            </div>
+          </div>
+
+          <!-- KPI 3 -->
+          <div class="kpi-card">
+            <div class="kpi-top">
+              <span class="kpi-label">Risk Score</span>
+              <div class="kpi-icon yellow">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+              </div>
+            </div>
+            <div class="kpi-main-val">
+              <span class="kpi-number" id="riskScoreNum">82</span>
+              <span class="kpi-subtext">/ 100</span>
+              <span class="badge high" style="margin-left:6px" id="riskScoreBadge">◆ High Risk</span>
+            </div>
+            <div class="kpi-delta" id="riskScoreDelta">
+              <span>▲ +12 from last analysis</span>
+            </div>
+          </div>
+
+          <!-- KPI 4 -->
+          <div class="kpi-card">
+            <div class="kpi-top">
+              <span class="kpi-label">Risk Level</span>
+              <div class="kpi-icon red">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+              </div>
+            </div>
+            <div class="kpi-main-val">
+              <span class="kpi-number risk-high" id="riskLevelText">HIGH</span>
+            </div>
+            <div class="kpi-delta negative" id="riskLevelNote">
+              <span>Requires immediate attention</span>
+            </div>
+          </div>
+
+          <!-- Live System Status Card -->
+          <div class="system-status-card">
+            <div class="system-status-header">
+              <span>Live System Status</span>
+              <div class="status-pill-green">
+                <span class="pulse-dot"></span>
+                <span>Online</span>
+              </div>
+            </div>
+            <div class="subsystem-list">
+              <div class="subsystem-row">
+                <span class="subsystem-name">
+                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="var(--accent-cyan)" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+                  Backend API
+                </span>
+                <span class="subsystem-val" id="statusBackend">Healthy</span>
+              </div>
+              <div class="subsystem-row">
+                <span class="subsystem-name">
+                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="var(--accent-cyan)" stroke-width="2"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"/><path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"/></svg>
+                  Database
+                </span>
+                <span class="subsystem-val" id="statusDb">Healthy</span>
+              </div>
+              <div class="subsystem-row">
+                <span class="subsystem-name">
+                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="var(--accent-cyan)" stroke-width="2"><path d="M5 12.55a11 11 0 0 1 14.08 0"/><path d="M1.42 9a16 16 0 0 1 21.16 0"/><path d="M8.53 16.11a6 6 0 0 1 6.95 0"/><line x1="12" y1="20" x2="12.01" y2="20"/></svg>
+                  WebSocket (Flights)
+                </span>
+                <span class="subsystem-val" id="statusWs">Connected</span>
+              </div>
+              <div class="subsystem-row">
+                <span class="subsystem-name">
+                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="var(--accent-cyan)" stroke-width="2"><rect x="4" y="4" width="16" height="16" rx="2"/><rect x="9" y="9" width="6" height="6"/><line x1="9" y1="1" x2="9" y2="4"/><line x1="15" y1="1" x2="15" y2="4"/><line x1="9" y1="20" x2="9" y2="23"/><line x1="15" y1="20" x2="15" y2="23"/><line x1="20" y1="9" x2="23" y2="9"/><line x1="20" y1="14" x2="23" y2="14"/><line x1="1" y1="9" x2="4" y2="9"/><line x1="1" y1="14" x2="4" y2="14"/></svg>
+                  ML Model
+                </span>
+                <span class="subsystem-val" id="statusMl">Loaded</span>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- Row 2: Live Flight Map + Current Flights & Telemetry -->
+        <section class="middle-grid">
+          <!-- Live Flight Monitoring Map (64% Width) -->
+          <div class="panel map-panel">
+            <div class="panel-header" style="flex-wrap: wrap; gap: 8px;">
+              <div class="panel-title-wrap">
+                <span class="panel-title">Live Flight Monitoring</span>
+                <span class="panel-subtitle">Real-time aircraft positions and great-circle flight routes</span>
+              </div>
+
+              <!-- Simulation Control Panel -->
+              <div class="sim-control-bar" id="dashSimControlBar">
+                <span class="sim-status-pill" id="dashSimStatus">
+                  <span class="pulse-dot"></span> <span id="dashSimStatusText">RUNNING</span>
+                </span>
+                <div class="sim-btn-group">
+                  <button class="sim-btn start" id="btnDashSimStart" onclick="handleDashboardSim('start')" title="Start / Resume Flight Simulation">
+                    <svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+                    <span>START</span>
+                  </button>
+                  <button class="sim-btn pause" id="btnDashSimPause" onclick="handleDashboardSim('pause')" title="Pause Simulation">
+                    <svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor"><rect x="6" y="4" width="4" height="16"/><rect x="14" y="4" width="4" height="16"/></svg>
+                    <span>PAUSE</span>
+                  </button>
+                  <button class="sim-btn reset" id="btnDashSimReset" onclick="handleDashboardSim('reset')" title="Reset Simulation">
+                    <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"/></svg>
+                    <span>RESET</span>
+                  </button>
+                </div>
+                <div class="speed-group" title="Simulation Speed Multiplier">
+                  <button class="speed-btn active" id="dashSpd1" onclick="handleDashboardSpeed(1, this)">1x</button>
+                  <button class="speed-btn" id="dashSpd2" onclick="handleDashboardSpeed(2, this)">2x</button>
+                  <button class="speed-btn" id="dashSpd5" onclick="handleDashboardSpeed(5, this)">5x</button>
+                </div>
+              </div>
+
+              <div style="display:flex; align-items:center; gap:6px;">
+                <button class="map-tool-btn" onclick="dashZoomIn()" title="Zoom In">+</button>
+                <button class="map-tool-btn" onclick="dashZoomOut()" title="Zoom Out">-</button>
+                <button class="map-tool-btn" onclick="dashFitAllFlights()" title="Fit All Flights">⌖ Fit Flights</button>
+                <button class="map-tool-btn" onclick="dashResetView()" title="Reset Map View">↻ Reset</button>
+                <a href="flights.html" class="panel-link" style="margin-left:6px;">Full Surveillance →</a>
+              </div>
+            </div>
+
+            <div class="map-container" id="mapWrapper" style="height: 440px; position: relative;">
+              <!-- Leaflet World Map Container -->
+              <div id="dashWorldMap" style="width: 100%; height: 100%; border-radius: var(--radius-sm);"></div>
+
+              <!-- Map Legend -->
+              <div class="map-legend">
+                <div class="legend-item"><span class="legend-dot" style="background:#21d4ff; box-shadow:0 0 6px #21d4ff;"></span>Origin Airport</div>
+                <div class="legend-item"><span class="legend-dot" style="background:#39d98a; box-shadow:0 0 6px #39d98a;"></span>Dest Airport</div>
+                <div class="legend-item"><span class="legend-route-line"></span>Flight Airway</div>
+                <div class="legend-item"><span class="legend-dot" style="background:var(--risk-low)"></span>Low Risk</div>
+                <div class="legend-item"><span class="legend-dot" style="background:var(--risk-medium)"></span>Medium Risk</div>
+                <div class="legend-item"><span class="legend-dot" style="background:var(--risk-high)"></span>High Risk</div>
+              </div>
+
+              <!-- Active Flights Badge -->
+              <div class="map-counter" id="activeFlightsCount">5 Active Flights</div>
+
+              <!-- Fallback Area if Map Error -->
+              <div id="dashMapErrorFallback" style="display:none; position:absolute; inset:0; background:#041220; z-index:1000; display:none; flex-direction:column; align-items:center; justify-content:center; gap:10px;">
+                <div style="color:var(--risk-high); font-weight:700;">⚠ Map temporarily unavailable</div>
+                <button class="action-btn secondary" onclick="initDashboardMap()">Retry Map</button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Current Flights & Telemetry Details (36% Width) -->
+          <div style="display:flex; flex-direction:column; gap:14px;">
+            <!-- Current Flights Table -->
+            <div class="panel" style="flex:1;">
+              <div class="panel-header">
+                <div class="panel-title-wrap">
+                  <span class="panel-title">Current Flights</span>
+                  <span class="panel-subtitle">Real-time aircraft status and telemetry</span>
+                </div>
+                <a href="flights.html" class="panel-link">View All →</a>
+              </div>
+              <div style="overflow-x:auto; max-height:220px;">
+                <table class="data-table">
+                  <thead>
+                    <tr>
+                      <th>Flight</th>
+                      <th>Route</th>
+                      <th>Alt</th>
+                      <th>Spd</th>
+                      <th>Risk</th>
+                    </tr>
+                  </thead>
+                  <tbody id="currentFlightsTbody">
+                    <!-- Populated dynamically via WebSocket / REST -->
+                  </tbody>
+                </table>
+              </div>
+            </div>
+
+            <!-- Selected Aircraft Inspection Card -->
+            <div class="panel" id="dashSelectedFlightCard" style="display:none;">
+              <div class="panel-header">
+                <div class="panel-title-wrap">
+                  <span class="panel-title" id="dashCardFlightId">AI303 — Boeing 777</span>
+                  <span class="panel-subtitle" id="dashCardRoute">Delhi → Singapore</span>
+                </div>
+                <span class="badge high" id="dashCardRisk">HIGH RISK</span>
+              </div>
+              <div class="panel-body" style="padding:10px 14px;">
+                <div class="rich-pop-grid" id="dashCardGrid">
+                  <!-- Injected via JavaScript -->
+                </div>
+              </div>
+            </div>
+
+            <!-- Impact Summary Panel -->
+            <div class="panel">
+              <div class="panel-header">
+                <div class="panel-title-wrap">
+                  <span class="panel-title">Impact Summary</span>
+                  <span class="panel-subtitle">Categorized module impact status</span>
+                </div>
+                <a href="analysis.html" class="panel-link">View Topology →</a>
+              </div>
+              <div class="panel-body" style="padding:8px 12px;">
+                <table class="impact-table" id="impactSummaryTable">
+                  <tbody>
+                    <tr>
+                      <td><b>navigation</b></td>
+                      <td style="text-align:right"><span class="module-badge changed">CHANGED</span></td>
+                    </tr>
+                    <tr>
+                      <td><b>flight_planning</b></td>
+                      <td style="text-align:right"><span class="module-badge direct">DIRECT IMPACT</span></td>
+                    </tr>
+                    <tr>
+                      <td><b>aircraft_monitoring</b></td>
+                      <td style="text-align:right"><span class="module-badge direct">DIRECT IMPACT</span></td>
+                    </tr>
+                    <tr>
+                      <td><b>communication</b></td>
+                      <td style="text-align:right"><span class="module-badge indirect">INDIRECT IMPACT</span></td>
+                    </tr>
+                    <tr>
+                      <td><b>weather</b></td>
+                      <td style="text-align:right"><span class="module-badge" style="background:rgba(57,217,138,0.2);color:#39d98a;">UNAFFECTED</span></td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- Row 3: Risk Analysis + Quick Actions -->
+        <section class="third-grid">
+          <!-- Risk Analysis with Circular Gauge -->
+          <div class="panel">
+            <div class="panel-header">
+              <div class="panel-title-wrap">
+                <span class="panel-title">Risk Analysis</span>
+                <span class="panel-subtitle">Evaluated software change risk & scope</span>
+              </div>
+            </div>
+            <div class="panel-body">
+              <div class="risk-analysis-content">
+                <!-- Circular Risk Gauge -->
+                <div class="risk-gauge-wrap">
+                  <svg class="risk-gauge-circle" viewBox="0 0 100 100">
+                    <circle class="risk-gauge-bg" cx="50" cy="50" r="40" />
+                    <circle class="risk-gauge-progress" id="riskGaugeBar" cx="50" cy="50" r="40" stroke-dasharray="251.2" stroke-dashoffset="45" />
+                  </svg>
+                  <div class="gauge-center">
+                    <span class="gauge-score" id="gaugeScoreVal">82</span>
+                    <span class="gauge-label" id="gaugeRiskLabel">High Risk</span>
+                  </div>
+                </div>
+
+                <!-- Key Factors -->
+                <div class="risk-factors-details">
+                  <div class="risk-factors-header">Key Factors</div>
+                  <div class="factor-line">
+                    <span>Critical Component</span>
+                    <b id="factorCritical">Navigation</b>
+                  </div>
+                  <div class="factor-line">
+                    <span>Impact Scope</span>
+                    <b id="factorScope">5 modules</b>
+                  </div>
+                  <div class="factor-line">
+                    <span>Regression Testing</span>
+                    <b class="danger" id="factorTesting">Required</b>
+                  </div>
+                  <div class="factor-line">
+                    <span>Estimated Effort</span>
+                    <b class="danger" id="factorEffort">High</b>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Quick Actions -->
+          <div class="panel">
+            <div class="panel-header">
+              <div class="panel-title-wrap">
+                <span class="panel-title">Quick Actions</span>
+                <span class="panel-subtitle">Immediate command execution</span>
+              </div>
+            </div>
+            <div class="panel-body">
+              <div class="actions-grid">
+                <button class="action-btn primary" id="btnRunAnalysis">
+                  <span class="action-icon">
+                    <svg viewBox="0 0 24 24" fill="currentColor"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+                  </span>
+                  <span>Run Analysis</span>
+                </button>
+                <button class="action-btn" onclick="location.href='flights.html'">
+                  <span class="action-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17.8 19.2 16 11l3.5-3.5C21 6 21.5 4 21 3c-1-.5-3 0-4.5 1.5L13 8 4.8 6.2c-.5-.1-.9.1-1.1.5l-.3.5c-.2.5-.1 1 .3 1.3L9 12l-2 3H4l-1 1 3 2 2 3 1-1v-3l3-2 3.5 5.2c.3.4.8.5 1.3.3l.5-.2c.4-.3.6-.7.5-1.1z"/></svg>
+                  </span>
+                  <span>Monitor Flights</span>
+                </button>
+                <button class="action-btn" onclick="location.href='tests.html'">
+                  <span class="action-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
+                  </span>
+                  <span>View Tests</span>
+                </button>
+                <button class="action-btn" id="btnGenerateReport">
+                  <span class="action-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+                  </span>
+                  <span>Generate Report</span>
+                </button>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- Row 4: Dependency Graph + Regression Tests + AI Risk Prediction -->
+        <section class="fourth-grid">
+          <!-- Dependency & Impact Graph -->
+          <div class="panel">
+            <div class="panel-header">
+              <div class="panel-title-wrap">
+                <span class="panel-title">Dependency & Impact Graph</span>
+                <span class="panel-subtitle">Interactive module dependency topology</span>
+              </div>
+            </div>
+            <div class="panel-body" style="padding:10px;">
+              <div class="graph-viewport" id="graphViewport">
+                <div class="graph-legend">
+                  <div class="graph-legend-item">
+                    <span class="graph-legend-line" style="background:#ff5266"></span>
+                    <span>Direct Impact</span>
+                  </div>
+                  <div class="graph-legend-item">
+                    <span class="graph-legend-line" style="background:#f0c75e"></span>
+                    <span>Indirect Impact</span>
+                  </div>
+                  <div class="graph-legend-item">
+                    <span class="graph-legend-line" style="background:#1e8fff"></span>
+                    <span>Dependency</span>
+                  </div>
+                </div>
+
+                <!-- Interactive SVG Graph matching reference nodes & layout -->
+                <svg id="dependencySvg" viewBox="0 0 460 210">
+                  <defs>
+                    <marker id="arrowDirect" markerWidth="6" markerHeight="6" refX="5" refY="3" orient="auto">
+                      <polygon points="0 0, 6 3, 0 6" fill="#ff5266" />
+                    </marker>
+                    <marker id="arrowIndirect" markerWidth="6" markerHeight="6" refX="5" refY="3" orient="auto">
+                      <polygon points="0 0, 6 3, 0 6" fill="#f0c75e" />
+                    </marker>
+                    <marker id="arrowDep" markerWidth="6" markerHeight="6" refX="5" refY="3" orient="auto">
+                      <polygon points="0 0, 6 3, 0 6" fill="#1e8fff" />
+                    </marker>
+                  </defs>
+
+                  <!-- Connective Edges -->
+                  <!-- Navigation -> Flight Planning (Direct) -->
+                  <line x1="230" y1="52" x2="160" y2="108" stroke="#ff5266" stroke-width="1.8" marker-end="url(#arrowDirect)" />
+                  <!-- Navigation -> Aircraft Monitoring (Direct) -->
+                  <line x1="230" y1="52" x2="300" y2="108" stroke="#ff5266" stroke-width="1.8" marker-end="url(#arrowDirect)" />
+                  <!-- Flight Planning -> Weather (Indirect) -->
+                  <line x1="130" y1="135" x2="90" y2="145" stroke="#f0c75e" stroke-width="1.5" marker-end="url(#arrowIndirect)" />
+                  <!-- Aircraft Monitoring -> Communication (Indirect) -->
+                  <line x1="330" y1="135" x2="250" y2="175" stroke="#f0c75e" stroke-width="1.5" marker-end="url(#arrowIndirect)" />
+                  <!-- Weather -> Communication (Dependency) -->
+                  <line x1="90" y1="170" x2="200" y2="185" stroke="#1e8fff" stroke-width="1.2" stroke-dasharray="3 3" marker-end="url(#arrowDep)" />
+
+                  <!-- Nodes (Clickable) -->
+                  <!-- Navigation (Top, Changed) -->
+                  <g class="graph-node-group" onclick="showNodeDetails('navigation')">
+                    <rect x="175" y="20" width="110" height="34" rx="6" fill="#2a1017" stroke="#ff5266" stroke-width="1.6" />
+                    <text x="230" y="41" fill="#fff" font-size="10.5" font-weight="700" text-anchor="middle">! navigation</text>
+                  </g>
+
+                  <!-- Weather (Left, Cloud) -->
+                  <g class="graph-node-group" onclick="showNodeDetails('weather')">
+                    <rect x="25" y="125" width="95" height="34" rx="6" fill="#082033" stroke="#2196f3" stroke-width="1.4" />
+                    <text x="72" y="146" fill="#e1f0fc" font-size="10" font-weight="600" text-anchor="middle">☁ weather</text>
+                  </g>
+
+                  <!-- Flight Planning (Center Left, Cog) -->
+                  <g class="graph-node-group" onclick="showNodeDetails('flight_planning')">
+                    <rect x="135" y="105" width="115" height="34" rx="6" fill="#261b10" stroke="#f09040" stroke-width="1.4" />
+                    <text x="192" y="126" fill="#ffdfc4" font-size="10" font-weight="600" text-anchor="middle">⚙ flight_planning</text>
+                  </g>
+
+                  <!-- Aircraft Monitoring (Center Right, Plane) -->
+                  <g class="graph-node-group" onclick="showNodeDetails('aircraft_monitoring')">
+                    <rect x="265" y="105" width="135" height="34" rx="6" fill="#252410" stroke="#f0c75e" stroke-width="1.4" />
+                    <text x="332" y="126" fill="#fff5d1" font-size="9.5" font-weight="600" text-anchor="middle">✈ aircraft_monitoring</text>
+                  </g>
+
+                  <!-- Communication (Bottom, Signal) -->
+                  <g class="graph-node-group" onclick="showNodeDetails('communication')">
+                    <rect x="185" y="170" width="125" height="32" rx="6" fill="#1b122c" stroke="#a855f7" stroke-width="1.4" />
+                    <text x="247" y="190" fill="#f0e6ff" font-size="10" font-weight="600" text-anchor="middle">🛜 communication</text>
+                  </g>
+                </svg>
+              </div>
+              <div class="graph-actions-bottom">
+                <button class="btn-secondary" onclick="location.href='analysis.html'">View Full Graph</button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Regression Test Prioritization Table -->
+          <div class="panel">
+            <div class="panel-header">
+              <div class="panel-title-wrap">
+                <span class="panel-title">Regression Test Prioritization</span>
+                <span class="panel-subtitle">Sorted by criticality and impact</span>
+              </div>
+              <a href="tests.html" class="panel-link">View All →</a>
+            </div>
+            <div style="overflow-x:auto;">
+              <table class="data-table">
+                <thead>
+                  <tr>
+                    <th>#</th>
+                    <th>Test Case</th>
+                    <th>Component</th>
+                    <th>Criticality</th>
+                    <th>Priority</th>
+                  </tr>
+                </thead>
+                <tbody id="priorityTestsTbody">
+                  <tr>
+                    <td>1</td>
+                    <td>Navigation Position Calculation</td>
+                    <td>navigation</td>
+                    <td>5</td>
+                    <td><span class="badge critical">◆ CRITICAL</span></td>
+                  </tr>
+                  <tr>
+                    <td>2</td>
+                    <td>Route Deviation Detection</td>
+                    <td>navigation</td>
+                    <td>5</td>
+                    <td><span class="badge high">◆ HIGH</span></td>
+                  </tr>
+                  <tr>
+                    <td>3</td>
+                    <td>Flight Plan Creation</td>
+                    <td>flight_planning</td>
+                    <td>5</td>
+                    <td><span class="badge high">◆ HIGH</span></td>
+                  </tr>
+                  <tr>
+                    <td>4</td>
+                    <td>Aircraft Monitoring Check</td>
+                    <td>aircraft_monitoring</td>
+                    <td>4</td>
+                    <td><span class="badge medium">◆ MEDIUM</span></td>
+                  </tr>
+                  <tr>
+                    <td>5</td>
+                    <td>Weather Data Processing</td>
+                    <td>weather</td>
+                    <td>3</td>
+                    <td><span class="badge medium">◆ MEDIUM</span></td>
+                  </tr>
+                  <tr>
+                    <td>6</td>
+                    <td>Communication Link Test</td>
+                    <td>communication</td>
+                    <td>3</td>
+                    <td><span class="badge low">◆ LOW</span></td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <!-- AI Risk Prediction & Top Risk Factors -->
+          <div class="panel">
+            <div class="panel-header">
+              <div class="panel-title-wrap">
+                <span class="panel-title">AI Risk Prediction</span>
+                <span class="panel-subtitle">Historical actual vs predicted risk model</span>
+              </div>
+            </div>
+            <div class="panel-body" style="padding:10px 14px;">
+              <div class="chart-legend">
+                <span style="color:#ff5266">● Predicted Risk</span>
+                <span style="color:#2196f3">● Actual Risk</span>
+              </div>
+              <!-- Dual-line Chart -->
+              <div class="chart-container">
+                <svg viewBox="0 0 280 120">
+                  <!-- Horizontal Grid lines -->
+                  <line x1="25" y1="15" x2="275" y2="15" stroke="#123046" stroke-width="0.8" />
+                  <text x="15" y="18" fill="#507086" font-size="8">100</text>
+                  <line x1="25" y1="42" x2="275" y2="42" stroke="#123046" stroke-width="0.8" />
+                  <text x="15" y="45" fill="#507086" font-size="8">75</text>
+                  <line x1="25" y1="68" x2="275" y2="68" stroke="#123046" stroke-width="0.8" />
+                  <text x="15" y="71" fill="#507086" font-size="8">50</text>
+                  <line x1="25" y1="95" x2="275" y2="95" stroke="#123046" stroke-width="0.8" />
+                  <text x="15" y="98" fill="#507086" font-size="8">25</text>
+
+                  <!-- Actual Risk Line (Blue) -->
+                  <path d="M 35 85 Q 70 82 105 75 T 175 60 T 245 45 T 275 30" fill="none" stroke="#2196f3" stroke-width="2" />
+
+                  <!-- Predicted Risk Line (Red) -->
+                  <path d="M 35 78 Q 70 76 105 68 T 175 48 T 245 38 T 275 22" fill="none" stroke="#ff5266" stroke-width="2" />
+
+                  <!-- Date X Labels -->
+                  <text x="32" y="112" fill="#507086" font-size="7.5">Apr 22</text>
+                  <text x="68" y="112" fill="#507086" font-size="7.5">Apr 23</text>
+                  <text x="104" y="112" fill="#507086" font-size="7.5">Apr 24</text>
+                  <text x="140" y="112" fill="#507086" font-size="7.5">Apr 25</text>
+                  <text x="176" y="112" fill="#507086" font-size="7.5">Apr 26</text>
+                  <text x="212" y="112" fill="#507086" font-size="7.5">Apr 27</text>
+                  <text x="248" y="112" fill="#507086" font-size="7.5">Apr 28</text>
+                  <text x="270" y="112" fill="#507086" font-size="7.5">Apr 29</text>
+                </svg>
+              </div>
+
+              <!-- Top Risk Factors -->
+              <div class="top-factors-section">
+                <div class="top-factors-title">Top Risk Factors</div>
+                <div class="factor-bar-row">
+                  <span class="factor-bar-num">1</span>
+                  <span class="factor-bar-name">Navigation module change</span>
+                  <div class="factor-progress-track">
+                    <div class="factor-progress-fill" style="width: 92%;"></div>
+                  </div>
+                  <span class="factor-bar-score">0.92</span>
+                </div>
+                <div class="factor-bar-row">
+                  <span class="factor-bar-num">2</span>
+                  <span class="factor-bar-name">Flight planning dependency</span>
+                  <div class="factor-progress-track">
+                    <div class="factor-progress-fill" style="width: 81%;"></div>
+                  </div>
+                  <span class="factor-bar-score">0.81</span>
+                </div>
+                <div class="factor-bar-row">
+                  <span class="factor-bar-num">3</span>
+                  <span class="factor-bar-name">Multiple module impact</span>
+                  <div class="factor-progress-track">
+                    <div class="factor-progress-fill" style="width: 76%;"></div>
+                  </div>
+                  <span class="factor-bar-score">0.76</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- Row 5: Recent Activity + System Logs + Reports -->
+        <section class="bottom-grid">
+          <!-- Recent Activity -->
+          <div class="panel">
+            <div class="panel-header">
+              <div class="panel-title-wrap">
+                <span class="panel-title">Recent Activity</span>
+                <span class="panel-subtitle">Event chronology</span>
+              </div>
+              <a href="#" class="panel-link" id="refreshActivityBtn">View All →</a>
+            </div>
+            <div class="panel-body" style="padding:10px 14px;">
+              <div class="activity-list" id="activityList">
+                <div class="activity-item">
+                  <span class="activity-dot" style="background:#39d98a"></span>
+                  <span class="activity-time">14:28</span>
+                  <span>Flight AI303 reported increased altitude (38,100 ft)</span>
+                </div>
+                <div class="activity-item">
+                  <span class="activity-dot" style="background:#f0c75e"></span>
+                  <span class="activity-time">14:22</span>
+                  <span>Analysis completed — Risk score: 82 (High)</span>
+                </div>
+                <div class="activity-item">
+                  <span class="activity-dot" style="background:#21d4ff"></span>
+                  <span class="activity-time">14:15</span>
+                  <span>Test prioritization updated (15 tests)</span>
+                </div>
+                <div class="activity-item">
+                  <span class="activity-dot" style="background:#21d4ff"></span>
+                  <span class="activity-time">14:10</span>
+                  <span>Database backup completed</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- System Logs -->
+          <div class="panel">
+            <div class="panel-header">
+              <div class="panel-title-wrap">
+                <span class="panel-title">System Logs</span>
+                <span class="panel-subtitle">Operational telemetry</span>
+              </div>
+              <a href="#" class="panel-link" id="refreshLogsBtn">View All →</a>
+            </div>
+            <div class="panel-body" style="padding:10px 14px;">
+              <div class="logs-terminal" id="logsTerminal">
+                <div class="log-entry">
+                  <span class="log-time">14:28</span>
+                  <span class="log-msg">WebSocket: Flight data received (3 flights)</span>
+                </div>
+                <div class="log-entry">
+                  <span class="log-time">14:22</span>
+                  <span class="log-msg">Model inference completed - Risk: 0.82</span>
+                </div>
+                <div class="log-entry">
+                  <span class="log-time">14:15</span>
+                  <span class="log-msg">Dependency graph generated</span>
+                </div>
+                <div class="log-entry">
+                  <span class="log-time">14:10</span>
+                  <span class="log-msg">Report generation completed</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Reports Panel -->
+          <div class="panel">
+            <div class="panel-header">
+              <div class="panel-title-wrap">
+                <span class="panel-title">Reports</span>
+                <span class="panel-subtitle">Downloadable safety documentation</span>
+              </div>
+              <a href="reports.html" class="panel-link">View All →</a>
+            </div>
+            <div class="panel-body" style="padding:10px 14px;">
+              <div class="reports-list" id="dashboardReportsList">
+                <div class="report-item">
+                  <div class="report-info">
+                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="var(--accent-cyan)" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+                    <span>Change Impact Analysis Report</span>
+                  </div>
+                  <div class="report-meta">
+                    <span>Apr 29, 2025</span>
+                    <span>2.4 MB</span>
+                    <button class="report-download-btn" onclick="API.downloadReport('impact')">Download</button>
+                  </div>
+                </div>
+
+                <div class="report-item">
+                  <div class="report-info">
+                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="var(--accent-cyan)" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+                    <span>Risk Assessment Report</span>
+                  </div>
+                  <div class="report-meta">
+                    <span>Apr 28, 2025</span>
+                    <span>1.8 MB</span>
+                    <button class="report-download-btn" onclick="API.downloadReport('risk')">Download</button>
+                  </div>
+                </div>
+
+                <div class="report-item">
+                  <div class="report-info">
+                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="var(--accent-cyan)" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+                    <span>Test Prioritization Report</span>
+                  </div>
+                  <div class="report-meta">
+                    <span>Apr 28, 2025</span>
+                    <span>1.2 MB</span>
+                    <button class="report-download-btn" onclick="API.downloadReport('tests')">Download</button>
+                  </div>
+                </div>
+
+                <div class="report-item">
+                  <div class="report-info">
+                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="var(--accent-cyan)" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+                    <span>Flight Simulation Report</span>
+                  </div>
+                  <div class="report-meta">
+                    <span>Apr 27, 2025</span>
+                    <span>3.1 MB</span>
+                    <button class="report-download-btn" onclick="API.downloadReport('simulation')">Download</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+      </div>
+
+      <!-- App Footer -->
+      <footer class="app-footer">
+        <span>Aviation Change Impact Analyzer &nbsp; v1.0.0</span>
+        <span>Built for safer aviation ✈</span>
+      </footer>
+    </main>
+  </div>
+
+  <!-- Interactive Node Inspection Modal -->
+  <div class="modal-overlay" id="nodeModal">
+    <div class="modal-card">
+      <div class="modal-header">
+        <span class="modal-title" id="nodeModalTitle">Module Inspection</span>
+        <button class="modal-close" onclick="closeNodeModal()">✕</button>
+      </div>
+      <div class="modal-body" id="nodeModalBody">
+        <!-- Injected via JavaScript -->
+      </div>
+    </div>
+  </div>
+
+  <!-- Scripts -->
+  <script src="js/leaflet.js"></script>
+  <script src="js/api.js?v=5.0"></script>
+  <script src="js/dashboard.js?v=5.0"></script>
+</body>
+</html>

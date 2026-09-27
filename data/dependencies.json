@@ -1,0 +1,31 @@
+{
+    "nodes": [
+        "navigation",
+        "flight_planning",
+        "aircraft_monitoring",
+        "weather",
+        "communication"
+    ],
+    "edges": [
+        {
+            "source": "flight_planning",
+            "target": "navigation"
+        },
+        {
+            "source": "aircraft_monitoring",
+            "target": "navigation"
+        },
+        {
+            "source": "aircraft_monitoring",
+            "target": "flight_planning"
+        },
+        {
+            "source": "flight_planning",
+            "target": "weather"
+        },
+        {
+            "source": "communication",
+            "target": "aircraft_monitoring"
+        }
+    ]
+}

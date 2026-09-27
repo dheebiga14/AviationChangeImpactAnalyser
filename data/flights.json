@@ -1,0 +1,67 @@
+[
+    {
+        "flight_id": "AI101",
+        "aircraft": "Boeing 737",
+        "departure": "Chennai",
+        "destination": "Delhi",
+        "latitude": 20.5,
+        "longitude": 78.2,
+        "altitude": 35000,
+        "speed": 480,
+        "heading": 120,
+        "status": "AIRBORNE",
+        "risk": "LOW"
+    },
+    {
+        "flight_id": "AI202",
+        "aircraft": "Airbus A320",
+        "departure": "Mumbai",
+        "destination": "Bengaluru",
+        "latitude": 15.8,
+        "longitude": 74.9,
+        "altitude": 33000,
+        "speed": 460,
+        "heading": 135,
+        "status": "AIRBORNE",
+        "risk": "LOW"
+    },
+    {
+        "flight_id": "AI303",
+        "aircraft": "Boeing 777",
+        "departure": "Delhi",
+        "destination": "Singapore",
+        "latitude": 18.5,
+        "longitude": 82.0,
+        "altitude": 38000,
+        "speed": 510,
+        "heading": 145,
+        "status": "AIRBORNE",
+        "risk": "LOW"
+    },
+    {
+        "flight_id": "AI404",
+        "aircraft": "Airbus A350",
+        "departure": "Kochi",
+        "destination": "Dubai",
+        "latitude": 15.5,
+        "longitude": 70.5,
+        "altitude": 36000,
+        "speed": 490,
+        "heading": 300,
+        "status": "AIRBORNE",
+        "risk": "LOW"
+    },
+    {
+        "flight_id": "AI505",
+        "aircraft": "Boeing 737",
+        "departure": "Coimbatore",
+        "destination": "Chennai",
+        "latitude": 11.8,
+        "longitude": 78.0,
+        "altitude": 29000,
+        "speed": 450,
+        "heading": 80,
+        "status": "AIRBORNE",
+        "risk": "LOW"
+    }
+]
